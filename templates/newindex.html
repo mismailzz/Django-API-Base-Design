@@ -1,9 +1,13 @@
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Bootstrap Example</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -11,6 +15,9 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    
+    
+    
     <style>
 
         html {
@@ -64,10 +71,11 @@
             
         }
     </style>
-    
+
 </head>
 <body>
-
+    
+    {% csrf_token %}
     <div class="mynav">
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
@@ -84,24 +92,22 @@
     </div>
 
     <div class="credContainer">
-        <form action="validate" method="post">  
-            
-    {% csrf_token %}   
+        <form>     
             <div class="form-row">
      
                 <div class="form-group col-md-2" id="ismail">
                     <label for="inputAddress">Username</label>
-                    <input type="text" class="form-control" id="inputAddress" placeholder="username" name="user">
+                    <input type="text" class="form-control" id="inputAddress" placeholder="username">
                 </div>
            
                 <div class="form-group col-md-2" id="ismail">
                     <label for="inputPassword4">Password</label>
-                    <input type="password" class="form-control" id="inputPassword4" placeholder="Password" name="pass">
+                    <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
                 </div>
 
                 <div class="form-group col-md-2" id="ismail">
                     <label for="inputAddress">IP Address</label>
-                    <input type="text" class="form-control" id="inputAddress" placeholder="192.168.150.17" name="ipaddr">
+                    <input type="text" class="form-control" id="inputAddress" placeholder="192.168.150.17">
                 </div>
 
                 <div class="form-group col-md-5" id="ismail">
@@ -113,9 +119,7 @@
           </form>
     </div>
 
-    <div class="form-group col-md-1" id="refresh">
-        <button class="btn btn-primary" id="mybutton">Refresh</button>
-    </div> 
+    <button id="mybutton">Get External Content</button>
      
     <div class="form-row col-md-12" style="width: 100%;">
         <!--Table start-->
@@ -150,55 +154,52 @@
             <!-- Footer -->
         </div>
 
-            <p>Username is :{{username}}</p>
-            <p>Password is: {{password}}</p>
-            <p>IP Address is: {{ipaddress}}</p>
-          
-
-
-        <script>
-            $(document).ready(function () {
-                $('#example').DataTable({
-                    scrollX: true,
-                });
+    <!--select2-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!--end select2-->
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                scrollX: true,
             });
-        </script>
-
-        <script>
-            $(document).ready(function () {
-                //BindStudents();
-                
-                //button start
-                $("#mybutton").click(function(){
-                  //BindStudents();  
-                   MyFunction();
-                });
-                //button end
-    
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            //BindStudents();
+            
+            //button start
+            $("#mybutton").click(function(){
+              //BindStudents();  
+               MyFunction();
             });
+            //button end
+
+        });
+
+        function MyFunction() {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: "http://127.0.0.1:8000/getInfo/HypervisorConnect/", success: function (result) {
+                   
+                    var totalCount = Object.keys(result).length;
     
-            function MyFunction() {
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: "http://127.0.0.1:8000/getInfo/HypervisorConnect/", success: function (result) {
-                       
-                        var totalCount = Object.keys(result).length;
-        
-                        var structureDiv = "";
-                        //structureDiv += "<p>" + result[0].hostname + "</p>";
-    
-                        for (var i = 0; i < totalCount; i++){
-                            structureDiv +=  "<tr><td>"+result[i].hypervisorIP + "</td><td>" +  result[i].name +"</td><td>" +  result[i].operatingSystem + "</td><td>" +  result[i].ipAddress + "</td><td>" +  result[i].state + "</td></tr>";
-                        }
-    
-                        $("#mytable").html(structureDiv);
-                  
+                    var structureDiv = "";
+                    //structureDiv += "<p>" + result[0].hostname + "</p>";
+
+                    for (var i = 0; i < totalCount; i++){
+                        structureDiv +=  "<tr><td>"+result[i].hypervisorIP + "</td><td>" +  result[i].name +"</td><td>" +  result[i].operatingSystem + "</td><td>" +  result[i].ipAddress + "</td><td>" +  result[i].state + "</td></tr>";
                     }
-                });
-    
-            }
-        </script>
+
+                    $("#mytable").html(structureDiv);
+              
+                }
+            });
+
+        }
+    </script>
     
 
 </body>

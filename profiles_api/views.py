@@ -18,40 +18,21 @@ class HypervisorConnect(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        data = {
-            'hypervisorIP': '192.168.150.19', 
-            'name': 'ltm',
-            'operatingSystem': 'Unkown', 
-            'ipAddress': '10.11.1.19',
-            'state':'powerON'
+
+        if request.method == 'POST':
+            username = request.POST["user"]
+            password = request.POST["pass"]
+            ipaddress = request.POST["ipaddr"]
+      
+        dict = {
+            'username': username,
+            'password': password,
+            'ipaddress': ipaddress
         }
-        serializer = HypervisortabledbSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-'''
-
-    def get(self, request, format=None):
-
-        """Return VM Information"""
-        hypervisor_info = {
-        '0' : {
-        'hostname' : 'ismail.com',
-        'ipAddress' : '10.11.17.200',
-        'opeartingSystem' : 'Redhat 7', 
-        },
-        '1' :{
-        'hostname' : 'ismail2.com',
-        'ipAddress' : '10.11.17.201',
-        'opeartingSystem' : 'Redhat 7', 
-        },
-        }
-        return Response(hypervisor_info)
-  
-'''
+        
+        
+        return render(request, 'index.html', dict)
+        
 
 def dashboard(request):
     return render(request, "index.html")
